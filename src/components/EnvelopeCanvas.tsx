@@ -35,6 +35,7 @@ export const EnvelopeCanvas = forwardRef<EnvelopeCanvasRef, EnvelopeCanvasProps>
 
     const imagesRef = useRef<(HTMLImageElement | null)[]>(new Array(TOTAL_FRAMES).fill(null));
     const loadedRef = useRef<boolean[]>(new Array(TOTAL_FRAMES).fill(false));
+    const loadingRef = useRef<boolean[]>(new Array(TOTAL_FRAMES).fill(false));
     const onOpenedTriggeredRef = useRef<boolean>(false);
     const memoryCleanedRef = useRef<boolean>(false);
 
@@ -263,9 +264,10 @@ export const EnvelopeCanvas = forwardRef<EnvelopeCanvasRef, EnvelopeCanvasProps>
     // Preload helper compatible with Safari WebKit with off-thread decode
     const loadSingleFrame = (index: number): Promise<void> => {
       if (index < 0 || index >= TOTAL_FRAMES) return Promise.resolve();
-      if (imagesRef.current[index] && loadedRef.current[index]) {
+      if ((imagesRef.current[index] && loadedRef.current[index]) || loadingRef.current[index]) {
         return Promise.resolve();
       }
+      loadingRef.current[index] = true;
       return new Promise((resolve) => {
         const img = new Image();
         img.onload = async () => {
@@ -278,12 +280,14 @@ export const EnvelopeCanvas = forwardRef<EnvelopeCanvasRef, EnvelopeCanvasProps>
           }
           imagesRef.current[index] = img;
           loadedRef.current[index] = true;
+          loadingRef.current[index] = false;
           if (index === 0 && currentFrameRef.current === 0) {
             renderCurrentFrame();
           }
           resolve();
         };
         img.onerror = () => {
+          loadingRef.current[index] = false;
           resolve();
         };
         img.src = getFrameUrl(index);
@@ -302,7 +306,7 @@ export const EnvelopeCanvas = forwardRef<EnvelopeCanvasRef, EnvelopeCanvasProps>
           await loadSingleFrame(idx);
         }
       };
-      await Promise.all(Array.from({ length: 3 }, () => worker()));
+      await Promise.all(Array.from({ length: 15 }, () => worker()));
     };
 
     // Imperative methods for parent
@@ -351,9 +355,9 @@ export const EnvelopeCanvas = forwardRef<EnvelopeCanvasRef, EnvelopeCanvasProps>
             await loadSingleFrame(idx);
           }
         };
-        await Promise.all(Array.from({ length: 3 }, () => bufferWorker()));
+        await Promise.all(Array.from({ length: 15 }, () => bufferWorker()));
 
-        // Priority 3: Remaining opening frames (36 to 214) buffered in background with concurrency 3
+        // Priority 3: Remaining opening frames (36 to 214) buffered in background with concurrency 15
         const remainingOpening: number[] = [];
         for (let i = 36; i <= LOOP_START; i++) {
           remainingOpening.push(i);
@@ -365,7 +369,7 @@ export const EnvelopeCanvas = forwardRef<EnvelopeCanvasRef, EnvelopeCanvasProps>
             await loadSingleFrame(idx);
           }
         };
-        Promise.all(Array.from({ length: 3 }, () => remainingWorker())).then(() => {
+        Promise.all(Array.from({ length: 15 }, () => remainingWorker())).then(() => {
           // Priority 4: Garden loop frames (215 to 299)
           const loopFrames: number[] = [];
           for (let i = LOOP_START + 1; i < TOTAL_FRAMES; i++) {
@@ -378,7 +382,7 @@ export const EnvelopeCanvas = forwardRef<EnvelopeCanvasRef, EnvelopeCanvasProps>
               await loadSingleFrame(idx);
             }
           };
-          Promise.all(Array.from({ length: 3 }, () => loopWorker()));
+          Promise.all(Array.from({ length: 10 }, () => loopWorker()));
         });
       };
 
