@@ -28,6 +28,7 @@ export default function App() {
   const [copied, setCopied] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [introState, setIntroState] = useState<'ready' | 'opening' | 'revealed'>('ready');
+  const [isIntroReady, setIsIntroReady] = useState<boolean>(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
   const [isPhoneFrame, setIsPhoneFrame] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -98,6 +99,14 @@ export default function App() {
     })
       .then(url => setQrCodeDataUrl(url))
       .catch(err => console.error('Failed to generate QR code', err));
+  }, []);
+
+  // Safety fallback: if first frame takes more than 2.5s on slow mobile networks, smoothly reveal
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsIntroReady(true);
+    }, 2500);
+    return () => clearTimeout(timer);
   }, []);
 
   const safeCopy = (text: string, onSuccess: () => void) => {
@@ -290,6 +299,7 @@ export default function App() {
       {/* ========================================================================= */}
       <section
         id="family-invite"
+        style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 800px' }}
         className="w-full py-16 sm:py-24 px-4 bg-[#FAF7F2]/92 backdrop-blur-md border-y border-[#C5A580]/30 shadow-sm"
       >
         <div className="max-w-xl mx-auto">
@@ -351,6 +361,7 @@ export default function App() {
       {/* ========================================================================= */}
       <section
         id="events"
+        style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 800px' }}
         className="relative w-full py-16 sm:py-24 px-4 bg-transparent overflow-hidden"
       >
         <div className="max-w-xl mx-auto relative z-10">
@@ -470,6 +481,7 @@ export default function App() {
       {/* ========================================================================= */}
       <section
         id="venue"
+        style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 800px' }}
         className="w-full py-16 sm:py-24 px-4 bg-[#FAF7F2]/95 backdrop-blur-md border-t border-[#C5A580]/30 shadow-sm"
       >
         <div className="max-w-xl mx-auto space-y-8">
@@ -584,6 +596,33 @@ export default function App() {
   return (
     <div className="min-h-screen w-full bg-[#080309] text-[#4A1E27] font-body-serif flex flex-col items-center justify-center antialiased selection:bg-[#E8BAC0]/30 selection:text-[#4A1E27] relative overflow-x-hidden">
 
+      {/* Royal Preloader Loading Screen until intro animation frame 0 is ready */}
+      <div
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0d060e] transition-opacity duration-700 ease-out select-none ${
+          isIntroReady ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+        aria-hidden={isIntroReady}
+      >
+        <div className="flex flex-col items-center space-y-6 px-6 text-center">
+          <div className="relative w-20 h-20 flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full border border-[#d4af37]/25 animate-ping opacity-30" />
+            <div className="absolute inset-0 rounded-full border-2 border-t-[#d4af37] border-r-transparent border-b-[#d4af37]/30 border-l-transparent animate-spin" />
+            <span className="font-cinzel text-xl text-[#FCECD7] tracking-wider font-semibold select-none drop-shadow-[0_2px_8px_rgba(212,175,55,0.4)]">
+              A &amp; S
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="font-cinzel text-lg sm:text-xl text-[#FCECD7] tracking-[0.25em] uppercase font-medium drop-shadow-md">
+              Ayush &amp; Somya
+            </h2>
+            <p className="font-sans-clean text-xs text-[#d4af37]/80 tracking-[0.2em] uppercase animate-pulse">
+              Preparing Your Invitation...
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Desktop Mode Switcher Bar */}
       {typeof window !== 'undefined' && window.innerWidth > 520 && (
         <header className="fixed top-3 z-50 flex flex-wrap items-center justify-center gap-2.5 bg-black/70 backdrop-blur-xl border border-white/20 py-1.5 px-4 rounded-full shadow-2xl transition-all">
@@ -639,7 +678,7 @@ export default function App() {
 
             {/* Pinned Background Video Canvas inside phone frame */}
             <div className="absolute inset-0 w-full h-full rounded-[38px] overflow-hidden pointer-events-none z-0">
-              <EnvelopeCanvas ref={envelopeRef} onOpened={handleTransitionReady} onWatermarkPos={setWatermarkPos} />
+              <EnvelopeCanvas ref={envelopeRef} onOpened={handleTransitionReady} onReady={() => setIsIntroReady(true)} onWatermarkPos={setWatermarkPos} />
             </div>
 
             {/* Small Circled Play/Pause Button covering Gemini Watermark */}
@@ -760,6 +799,8 @@ export default function App() {
                 <img
                   src={qrCodeDataUrl}
                   alt="Scan to open on mobile"
+                  loading="lazy"
+                  decoding="async"
                   className="w-36 h-36 rounded-lg object-contain"
                 />
               ) : (
@@ -790,7 +831,7 @@ export default function App() {
         <main className="relative w-full min-h-[100dvh] bg-[#0d060e] flex flex-col overflow-x-hidden">
           {/* Background Video Canvas (Fixed edge-to-edge for mobile, locked height so it stays completely still on scroll) */}
           <div className="fixed inset-0 w-full h-full pointer-events-none z-0 bg-[#0d060e] overflow-hidden" style={{ height: '100lvh', minHeight: '100%' }}>
-            <EnvelopeCanvas ref={envelopeRef} onOpened={handleTransitionReady} onWatermarkPos={setWatermarkPos} />
+            <EnvelopeCanvas ref={envelopeRef} onOpened={handleTransitionReady} onReady={() => setIsIntroReady(true)} onWatermarkPos={setWatermarkPos} />
           </div>
 
           {/* Small Circled Play/Pause Button covering Gemini Watermark */}

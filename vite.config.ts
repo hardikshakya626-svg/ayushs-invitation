@@ -16,6 +16,9 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      chunkSizeWarningLimit: 1000,
+    },
     server: {
       host: '0.0.0.0',
       allowedHosts: true as const,

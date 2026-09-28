@@ -7,6 +7,7 @@ export interface EnvelopeCanvasRef {
 
 interface EnvelopeCanvasProps {
   onOpened?: () => void;
+  onReady?: () => void;
   onWatermarkPos?: (pos: { x: number; y: number }) => void;
   className?: string;
 }
@@ -14,7 +15,7 @@ interface EnvelopeCanvasProps {
 const TOTAL_FRAMES = 300;
 const FPS = 30;
 const FRAME_PREFIX = '/frames/frame_';
-const FRAME_EXT = '.jpg';
+const FRAME_EXT = '.webp';
 const LOOP_START = 214; // Lavender floral background start (envelope cut out)
 const LOOP_END = 299;   // Lavender floral background end
 const CUSHION = 10;     // Turnaround easing frames
@@ -24,7 +25,7 @@ function getFrameUrl(index: number): string {
 }
 
 export const EnvelopeCanvas = forwardRef<EnvelopeCanvasRef, EnvelopeCanvasProps>(
-  ({ onOpened, onWatermarkPos, className }, ref) => {
+  ({ onOpened, onReady, onWatermarkPos, className }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const stateRef = useRef<'ready' | 'opening' | 'looping'>('ready');
     const currentFrameRef = useRef<number>(0);
@@ -342,6 +343,9 @@ export const EnvelopeCanvas = forwardRef<EnvelopeCanvasRef, EnvelopeCanvasProps>
         // Priority 1: Frame 0 (instant first paint of closed envelope)
         await loadSingleFrame(0);
         renderCurrentFrame();
+        if (onReady) {
+          onReady();
+        }
 
         // Priority 2: Initial buffer of opening frames (1 to 35) with concurrency 3
         const initialBuffer: number[] = [];
