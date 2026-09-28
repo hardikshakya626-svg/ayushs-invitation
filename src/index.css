@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body {
+    scroll-behavior: smooth;
+    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+    background-color: #0d060e;
+    color: #4A1E27;
+    overflow-x: hidden;
+    width: 100%;
+  }
+}
+
+/* Hide default browser scrollbar slider cleanly */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF6F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #E2C9C9;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C5A580;
+}
+
+.font-serif-title {
+  font-family: 'Playfair Display', 'Cormorant Garamond', serif;
+}
+
+.font-script {
+  font-family: 'Alex Brush', 'Great Vibes', cursive;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-body-serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-sans-clean {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Ethereal Neoclassical Palace Sunbeam & Blush Mist Atmosphere */
+.bg-palace-mist {
+  background-color: #FAF6F2;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba(244, 222, 224, 0.45) 0%, transparent 65%),
+    radial-gradient(circle at 10% 40%, rgba(247, 230, 232, 0.3) 0%, transparent 40%),
+    radial-gradient(circle at 90% 70%, rgba(244, 222, 224, 0.3) 0%, transparent 40%);
+}
+
+/* Pristine, clean card styling */
+.palace-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(197, 165, 128, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(90, 36, 48, 0.04);
+}
+
+@keyframes sealPulse {
+  0% {
+    transform: scale(0.65);
+    opacity: 0.9;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+  }
+  50% {
+    opacity: 0.45;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+  }
+  100% {
+    transform: scale(1.75);
+    opacity: 0;
+    box-shadow: 0 0 45px rgba(212, 175, 55, 0);
+  }
+}
+
+@keyframes tapFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+

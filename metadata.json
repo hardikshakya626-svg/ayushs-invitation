@@ -1,0 +1,6 @@
+{
+  "name": "Antigravity 3D Motion Invitation Studio",
+  "description": "Create breathtaking 3D zero-gravity floating invitations and motion animations with realistic physics, luxury floral florals, custom envelope reveals, and AI-driven Antigravity Agent styling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
