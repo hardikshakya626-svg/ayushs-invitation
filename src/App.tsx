@@ -18,11 +18,13 @@ import {
   Wifi,
   QrCode as QrIcon,
   Play,
-  Pause
+  Pause,
+  Sparkles
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { FloralDivider, CornerFloral } from './components/FloralMotifs';
 import { EnvelopeCanvas, EnvelopeCanvasRef } from './components/EnvelopeCanvas';
+import { RsvpSection } from './components/RsvpSection';
 
 export default function App() {
   const [copied, setCopied] = useState(false);
@@ -284,14 +286,24 @@ export default function App() {
           </div>
         </div>
 
-        {/* Scroll Down Indicator */}
-        <a
-          href="#family-invite"
-          className="mt-6 sm:mt-8 inline-flex flex-col items-center gap-1.5 text-xs font-sans-clean tracking-[0.25em] uppercase text-white/90 hover:text-white transition-colors group cursor-pointer drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
-        >
-          <span>Scroll to Explore</span>
-          <ChevronDown className="w-4 h-4 text-[#FCECD7] group-hover:translate-y-1 transition-transform animate-bounce drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" />
-        </a>
+        {/* Quick RSVP & Scroll Down Indicator */}
+        <div className="mt-5 sm:mt-7 flex flex-col items-center gap-3 relative z-10">
+          <a
+            href="#rsvp"
+            className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/95 hover:bg-white text-[#5A2430] border-2 border-[#D4AF37] font-cinzel text-xs font-bold tracking-[0.25em] uppercase shadow-[0_8px_25px_rgba(0,0,0,0.5),0_0_15px_rgba(212,175,55,0.4)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6),0_0_25px_rgba(212,175,55,0.7)] transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-md"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span>RSVP Now</span>
+          </a>
+
+          <a
+            href="#family-invite"
+            className="inline-flex flex-col items-center gap-1 text-[11px] font-sans-clean tracking-[0.25em] uppercase text-white/90 hover:text-white transition-colors group cursor-pointer drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
+          >
+            <span>Scroll to Explore</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#FCECD7] group-hover:translate-y-1 transition-transform animate-bounce drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" />
+          </a>
+        </div>
       </section>
 
       {/* ========================================================================= */}
@@ -576,7 +588,12 @@ export default function App() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. FOOTER */}
+      {/* 5. RSVP SECTION (Matching Palace Aesthetic, Gold & Royal Wine) */}
+      {/* ========================================================================= */}
+      <RsvpSection />
+
+      {/* ========================================================================= */}
+      {/* 6. FOOTER */}
       {/* ========================================================================= */}
       <footer className="w-full py-12 px-4 border-t border-[#C5A580]/30 bg-[#FAF7F2]/95 backdrop-blur-md text-center space-y-3">
         <FloralDivider className="w-48 h-8 text-[#C5A580] mx-auto" />
@@ -589,6 +606,15 @@ export default function App() {
         <p className="text-xs text-[#4A1E27]/60 font-sans-clean pt-1">
           Kathuria &amp; Sharma Families
         </p>
+        <div className="pt-2">
+          <a
+            href="#rsvp"
+            className="inline-flex items-center gap-1.5 text-xs font-cinzel uppercase tracking-[0.2em] text-[#5A2430] hover:text-[#3B0E16] font-semibold border-b border-[#C5A580]/50 pb-0.5 transition-colors cursor-pointer"
+          >
+            <Sparkles className="w-3 h-3 text-[#D4AF37]" />
+            <span>Respond to Invitation (RSVP)</span>
+          </a>
+        </div>
       </footer>
     </div>
   );

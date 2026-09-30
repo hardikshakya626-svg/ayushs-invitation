@@ -20,3 +20,4 @@ watermark_surroundings.png
 test-mobile-interaction.mjs
 optimize_frames.py
 run_test.py
+data/
